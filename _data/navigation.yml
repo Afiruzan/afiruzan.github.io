@@ -2,13 +2,11 @@
 main:
   - title: "About"
     url: /
+  - title: "Research"
+    url: /portfolio/
   - title: "Publications"
     url: /publications/
-  - title: "Research Projects"
-    url: /portfolio/
-  - title: "Talks"
-    url: /talks/
-  - title: "Teaching"
-    url: /teaching/
   - title: "CV"
     url: /cv/
+  - title: "GitHub"
+    url: https://github.com/Afiruzan
