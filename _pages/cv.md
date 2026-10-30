@@ -1,64 +1,35 @@
 ---
 layout: archive
-title: "CV"
+title: "Curriculum Vitae"
 permalink: /cv/
 author_profile: true
-redirect_from:
-  - /resume
 ---
 
-{% include base_path %}
+# Arash Firuzan
 
-Education
-======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
+**Research interests:** Computer Architecture, AI Accelerators, Network-on-Chip (NoC), Reconfigurable Interconnects, 3D NoC, and Hardware Optimization.
 
-Work experience
-======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
+[GitHub profile](https://github.com/Afiruzan) · [Personal website](https://afiruzan.github.io)
 
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+## Research profile
 
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+My current technical work focuses on the design and evaluation of accelerator interconnects and reconfigurable NoC architectures. The projects presented on this website include Muqarnas-NoC, RASHT-3D, and ANDE.
 
-Publications
-======
-  <ul>{% for post in site.publications reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks reversed %}
-    {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
-======
-* Currently signed in to 43 different slack teams
+## Selected research projects
+
+- **Muqarnas-NoC:** hierarchical reconfigurable NoC architecture, routing and RTL implementation.
+- **RASHT-3D:** 3D NoC architecture exploration with a 16×16 processing-element organization and vertical links.
+- **ANDE:** optimization framework for processing-element placement and network configuration.
+
+## Technical areas and tools
+
+- **Hardware description and simulation:** SystemVerilog, Icarus Verilog, Verilator, ModelSim/Questa-oriented RTL workflows
+- **Architecture and modeling:** C++, network topology and routing models, traffic-driven evaluation
+- **Research computing:** Linux/Ubuntu, Git, GitHub Actions, reproducible simulation workflows
+- **Deep-learning hardware:** processing-element arrays, dataflow mapping, and accelerator communication
+
+## Education, appointments, and publications
+
+Formal education, professional appointments, awards, and bibliographic records are intentionally not listed here until verified details and publication metadata are available. This avoids publishing inaccurate or placeholder credentials.
+
+For current research code and project updates, see the [GitHub profile](https://github.com/Afiruzan).
