@@ -1,5 +1,6 @@
 ---
 permalink: /
+description: "Arash Firuzan — research in computer architecture, AI accelerators, reconfigurable Network-on-Chip architectures, and hardware systems."
 author_profile: false
 ---
 
