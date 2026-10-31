@@ -18,7 +18,6 @@ My current technical work focuses on the design and evaluation of accelerator in
 ## Selected research projects
 
 - **Muqarnas-NoC:** hierarchical reconfigurable NoC architecture, routing and RTL implementation.
-- **RASHT-3D:** 3D NoC architecture exploration with a 16×16 processing-element organization and vertical links.
 - **ANDE:** optimization framework for processing-element placement and network configuration.
 
 ## Technical areas and tools
