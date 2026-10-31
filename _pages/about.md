@@ -28,12 +28,6 @@ A hierarchical, reconfigurable NoC concept inspired by the geometric organizatio
 
 [Explore the Muqarnas-NoC project](/portfolio/muqarnas-noc/)
 
-### RASHT-3D
-
-A 3D NoC research direction organized around a 16×16 processing-element array with vertical communication links. The architecture is being developed to study the balance among latency, energy, and silicon area under a consistent evaluation methodology.
-
-[Explore the RASHT-3D project](/portfolio/rasht-3d/)
-
 ### ANDE
 
 Adaptive Network Differential Equations (ANDE) is an optimization-oriented framework for exploring processing-element placement and interconnect configuration. Its mathematical direction combines continuous optimization and discrete network constraints; convergence properties and practical effectiveness require careful analytical and experimental validation.
