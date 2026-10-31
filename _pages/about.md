@@ -1,7 +1,6 @@
 ---
 permalink: /
-title: "Arash Firuzan | Computer Architecture & AI Accelerators"
-author_profile: true
+author_profile: false
 ---
 
 <section class="af-hero" aria-label="Introduction">
