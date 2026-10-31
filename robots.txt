@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://afiruzan.github.io/sitemap.xml
