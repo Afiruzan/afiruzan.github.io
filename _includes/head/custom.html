@@ -22,3 +22,38 @@
 <!-- end custom head snippets -->
 
 <link rel="stylesheet" href="{{ base_path }}/assets/css/custom.css">
+
+
+{% comment %}Structured data for the homepage and publication records{% endcomment %}
+{% if page.url == "/" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "{{ site.url }}/#person",
+    "name": "Arash Firuzan",
+    "url": "{{ site.url }}/",
+    "description": "Researcher in computer architecture, AI accelerators, and reconfigurable Network-on-Chip architectures.",
+    "sameAs": [
+      "https://scholar.google.com/citations?user=Ezu-7uYAAAAJ&hl=en",
+      "https://github.com/Afiruzan"
+    ]
+  }
+}
+</script>
+{% elsif page.collection == "publications" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": {{ page.title | jsonify }},
+  "datePublished": "{{ page.date | date: '%Y-%m-%d' }}",
+  "url": "{{ page.url | absolute_url }}",
+  "isPartOf": {{ page.venue | default: site.title | jsonify }},
+  "sameAs": {{ page.paperurl | jsonify }},
+  "description": {{ page.excerpt | default: page.title | strip_html | strip_newlines | jsonify }}
+}
+</script>
+{% endif %}
