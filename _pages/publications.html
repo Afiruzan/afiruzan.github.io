@@ -5,4 +5,11 @@ permalink: /publications/
 author_profile: true
 ---
 
-A verified publication list will be added here as bibliographic records, publication venues, and persistent links are finalized. Research projects and work in progress are described on the [Research page](/portfolio/).
+My peer-reviewed publications on reconfigurable communication fabrics and Network-on-Chip architectures are listed below. Bibliographic records are cross-checked against DBLP and publisher records. Abstract text is included where a publisher abstract could be verified; otherwise, the description is explicitly identified as an editorial summary.
+
+{% assign papers = site.publications | sort: "date" | reverse %}
+{% for post in papers %}
+  {% include archive-single.html %}
+{% endfor %}
+
+[View my Google Scholar profile](https://scholar.google.com/citations?user=Ezu-7uYAAAAJ&hl=en) for the latest citation and indexing information.
