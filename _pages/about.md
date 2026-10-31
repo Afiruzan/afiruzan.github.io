@@ -4,40 +4,49 @@ title: "Arash Firuzan | Computer Architecture & AI Accelerators"
 author_profile: true
 ---
 
-# Arash Firuzan
+<section class="af-hero" aria-label="Introduction">
+  <div>
+    <p class="af-hero__eyebrow">Research · Architecture · Innovation</p>
+    <h1>Arash Firuzan</h1>
+    <p class="af-hero__lead">Exploring efficient computer architectures, reconfigurable interconnects, and hardware systems for AI acceleration.</p>
+    <div class="af-tags"><span>Computer Architecture</span><span>AI Accelerators</span><span>Network-on-Chip</span></div>
+    <div class="af-hero__links">
+      <a class="af-hero__button af-hero__button--primary" href="/publications/">View publications</a>
+      <a class="af-hero__button" href="https://scholar.google.com/citations?user=Ezu-7uYAAAAJ&amp;hl=en">Google Scholar ↗</a>
+    </div>
+  </div>
+  <img class="af-hero__art" src="/assets/images/research-network.svg" alt="Abstract vector illustration of a hierarchical reconfigurable network with connected processing nodes" width="760" height="560" fetchpriority="high">
+</section>
 
-**Computer Architecture · AI Accelerators · Network-on-Chip Systems**
+I work on computer architecture and hardware systems for efficient data movement and deep-learning acceleration. My current research interests focus on reconfigurable Network-on-Chip (NoC) architectures, accelerator interconnects, and optimization methods for mapping processing elements and communication resources.
 
-I work on computer architecture and hardware systems for efficient data movement and deep-learning acceleration. My current research interests focus on reconfigurable Network-on-Chip (NoC) architectures, accelerator interconnects, 3D integration, and optimization methods for mapping processing elements and communication resources.
-
-This website presents selected research directions, implementation work, and technical materials. Project descriptions distinguish ongoing design and evaluation from experimentally validated results; performance claims will be added only when supported by reproducible measurements.
+This website presents selected research directions, implementation work, and technical materials. Project descriptions distinguish ongoing design and evaluation from experimentally validated results; performance claims are included only when supported by reproducible measurements.
 
 ## Research interests
 
 - **AI accelerator architecture:** dataflows, processing-element arrays, and efficient communication for neural-network workloads
 - **Network-on-Chip:** topology design, routing, arbitration, switching, and reconfigurable links
-- **3D integration:** vertical interconnects and performance–energy–area trade-offs
-- **Optimization for hardware mapping:** graph models, placement, traffic-aware configuration, and differential-equation-inspired methods
+- **Hardware optimization:** graph models, placement, traffic-aware configuration, and differential-equation-inspired methods
 - **RTL and architecture evaluation:** SystemVerilog, simulation, synthesis flows, and reproducible benchmarking
 
-## Selected research directions
+## Selected research
 
 ### Muqarnas-NoC
 
-A hierarchical, reconfigurable NoC concept inspired by the geometric organization of Muqarnas. The design explores structured communication domains, configurable lateral and express paths, and routing mechanisms for many-core accelerator fabrics. The implementation and evaluation workflow includes RTL simulation and traffic-driven architectural analysis.
+A hierarchical, reconfigurable NoC concept inspired by the geometric organization of Muqarnas. The design explores structured communication domains, configurable lateral and express paths, and routing mechanisms for many-core accelerator fabrics.
 
-[Explore the Muqarnas-NoC project](/portfolio/muqarnas-noc/)
+[Explore Muqarnas-NoC →](/portfolio/muqarnas-noc/)
 
-### ANDE
+### ANDE — Adaptive Network Differential Equations
 
-Adaptive Network Differential Equations (ANDE) is an optimization-oriented framework for exploring processing-element placement and interconnect configuration. Its mathematical direction combines continuous optimization and discrete network constraints; convergence properties and practical effectiveness require careful analytical and experimental validation.
+An optimization-oriented framework for exploring processing-element placement and interconnect configuration. Its mathematical direction combines continuous optimization and discrete network constraints; convergence properties and practical effectiveness require analytical and experimental validation.
 
-[Explore the ANDE project](/portfolio/ande/)
+[Explore ANDE →](/portfolio/ande/)
 
 ## Research software
 
-Implementation notes, source code, and selected artifacts are published through the [GitHub profile](https://github.com/Afiruzan). Repositories are updated as individual components become ready for public release.
+Implementation notes, source code, and selected artifacts are published through the [GitHub profile](https://github.com/Afiruzan).
 
 ## Collaboration
 
-I welcome technical discussion and research collaboration in computer architecture, AI accelerators, NoC design, and hardware evaluation. The best starting point is my [GitHub profile](https://github.com/Afiruzan).
+I welcome technical discussion and research collaboration in computer architecture, AI accelerators, NoC design, and hardware evaluation. The best starting point is my [Google Scholar profile](https://scholar.google.com/citations?user=Ezu-7uYAAAAJ&hl=en) or [GitHub profile](https://github.com/Afiruzan).
