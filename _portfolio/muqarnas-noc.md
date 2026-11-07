@@ -3,7 +3,7 @@ title: "Muqarnas-NoC: Architecture, RTL & Simulation"
 collection: portfolio
 permalink: /portfolio/muqarnas-noc/
 excerpt: "An evolving research log documenting the design, RTL verification, traffic-driven simulation, and reproducible evaluation of a hierarchical reconfigurable Network-on-Chip."
-date: 2026-11-03
+date: 2026-11-07
 ---
 
 Muqarnas-NoC is an ongoing research project exploring a hierarchical, reconfigurable Network-on-Chip (NoC) for many-core accelerator systems. The project takes structural inspiration from the layered geometry of Muqarnas and investigates how configurable communication paths can support different traffic patterns and communication domains.
@@ -195,3 +195,28 @@ The values on this page are tied to the experiment stages described above. Unsta
 ## 10. Source code and project updates
 
 The project source and engineering updates are associated with the [Afiruzan GitHub profile](https://github.com/Afiruzan/). This page will be updated as additional experiments complete and their raw data and analysis are validated.
+
+
+## 11. API connectivity and autonomous workflow update (7 November 2026)
+
+The local API setup has reached the connectivity-check stage. Both OpenAI and DeepSeek API key authentication succeeded, and each service returned its available model list. A minimal text-generation request was then attempted against each provider:
+
+| Provider | Authentication / model listing | Text generation test |
+|---|---|---|
+| OpenAI | Successful | HTTP 429: no API credits remaining |
+| DeepSeek | Successful | HTTP 402: insufficient balance |
+
+Both API keys were replaced after they had been exposed in a screenshot. The replacement credentials are kept private and are not included in this repository. The generation tests have not yet succeeded; the current blocker is account balance, not a demonstrated Python SDK or Ubuntu connectivity problem. The tests should be repeated after the API accounts are funded. API billing is separate from a ChatGPT subscription.
+
+The intended multi-agent workflow will use OpenAI for research direction and analysis, DeepSeek for coding/debugging assistance, and deterministic local checks for validation. LangGraph is installed in the local Python virtual environment as a candidate orchestrator. The agent system itself has **not** yet been implemented or validated, and no autonomous experiment execution is claimed.
+
+**Execution policy:** all code editing, compilation, BookSim runs, RTL simulations, data analysis, and result storage remain on the researcher's own Ubuntu VMware virtual machine. The APIs provide model inference only; they are not used as remote simulation machines. Credentials are stored in a private `.env` file and must never be committed to Git or shown in screenshots.
+
+## 12. Updated next steps
+
+1. Fund the OpenAI and DeepSeek API accounts, then rerun the minimal generation test.
+2. Implement the first agent task as a read-only audit of the existing local Muqarnas-NoC project and its scripts.
+3. Reproduce the existing RTL regression before permitting code modifications or new benchmark runs.
+4. Add command allowlists, backups/Git branches, bounded retries, serial execution, and explicit spending limits before enabling autonomous actions.
+5. Continue the saturation-region sweep and review outstanding RTL width warnings.
+6. Add a validated Muqarnas model and matched traffic traces before making comparative performance claims.
