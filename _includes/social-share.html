@@ -1,17 +1,56 @@
 {% include base_path %}
 
+{% assign share_url = base_path | append: page.url | absolute_url | url_encode %}
+{% assign share_title = page.title | default: site.title | url_encode %}
+
 <section class="page__share">
   {% if site.data.ui-text[site.locale].share_on_label %}
     <h4 class="page__share-title">{{ site.data.ui-text[site.locale].share_on_label | default: "Share on" }}</h4>
   {% endif %}
 
-  <a href="https://bsky.app/intent/compose?text={{ base_path }}{{ page.url }}" class="btn btn--bluesky" title="{{ site.data.ui-text[site.locale].share_on_label | default: 'Share on' }} Bluesky"><i class="fab fa-bluesky" aria-hidden="true"></i><span> Bluesky</span></a>
+  <a href="https://bsky.app/intent/compose?text={{ share_title }}%20{{ share_url }}" class="btn btn--bluesky" title="Share on Bluesky" target="_blank" rel="noopener noreferrer"><i class="fab fa-bluesky" aria-hidden="true"></i><span> Bluesky</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u={{ base_path }}{{ page.url }}" class="btn btn--facebook" title="{{ site.data.ui-text[site.locale].share_on_label | default: 'Share on' }} Facebook"><i class="fab fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" class="btn btn--facebook" title="Share on Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ base_path }}{{ page.url }}" class="btn btn--linkedin" title="{{ site.data.ui-text[site.locale].share_on_label | default: 'Share on' }} LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url }}" class="btn btn--linkedin" title="Share on LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 
-  <a href="https://www.addtoany.com/add_to/mastodon?linkurl={{  base_path | append: page.url | url_encode }}" class="btn btn--mastodon" title="{{ site.data.ui-text[site.locale].share_on_label | default: 'Share on' }} Mastodon"><i class="fab fa-mastodon" aria-hidden="true"></i><span> Mastodon</span></a>
+  <a href="https://t.me/share/url?url={{ share_url }}&text={{ share_title }}" class="btn btn--telegram" title="Share on Telegram" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram" aria-hidden="true"></i><span> Telegram</span></a>
 
-  <a href="https://x.com/intent/post?text={{ base_path }}{{ page.url }}" class="btn btn--x" title="{{ site.data.ui-text[site.locale].share_on_label | default: 'Share on' }} X"><i class="fab fa-x-twitter" aria-hidden="true"></i><span> X (formerly Twitter)</span></a>
+  <button type="button" class="btn btn--instagram" id="instagram-share" data-share-url="{{ base_path }}{{ page.url | relative_url }}" data-share-title="{{ page.title | default: site.title | escape }}" title="Share via Instagram using your device's share menu"><i class="fab fa-instagram" aria-hidden="true"></i><span> Instagram</span></button>
+
+  <a href="https://www.addtoany.com/add_to/mastodon?linkurl={{ share_url }}" class="btn btn--mastodon" title="Share on Mastodon" target="_blank" rel="noopener noreferrer"><i class="fab fa-mastodon" aria-hidden="true"></i><span> Mastodon</span></a>
+
+  <a href="https://x.com/intent/post?text={{ share_title }}%20{{ share_url }}" class="btn btn--x" title="Share on X" target="_blank" rel="noopener noreferrer"><i class="fab fa-x-twitter" aria-hidden="true"></i><span> X (formerly Twitter)</span></a>
 </section>
+
+<script>
+(function () {
+  var button = document.getElementById('instagram-share');
+  if (!button) return;
+
+  button.addEventListener('click', async function () {
+    var url = new URL(button.dataset.shareUrl, window.location.origin).href;
+    var title = button.dataset.shareTitle || document.title;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: title, text: title, url: url });
+        return;
+      } catch (error) {
+        if (error && error.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+      button.querySelector('span').textContent = ' Link copied';
+      window.setTimeout(function () {
+        button.querySelector('span').textContent = ' Instagram';
+      }, 2500);
+    } catch (error) {
+      window.prompt('Copy this page link and share it on Instagram:', url);
+    }
+  });
+})();
+</script>
