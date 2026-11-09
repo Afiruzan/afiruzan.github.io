@@ -3,7 +3,7 @@ title: "Muqarnas-NoC: Architecture, RTL & Simulation"
 collection: portfolio
 permalink: /portfolio/muqarnas-noc/
 excerpt: "An evolving research log documenting the design, RTL verification, traffic-driven simulation, and reproducible evaluation of a hierarchical reconfigurable Network-on-Chip."
-date: 2026-11-07
+date: 2026-11-09
 ---
 
 Muqarnas-NoC is an ongoing research project exploring a hierarchical, reconfigurable Network-on-Chip (NoC) for many-core accelerator systems. The project takes structural inspiration from the layered geometry of Muqarnas and investigates how configurable communication paths can support different traffic patterns and communication domains.
@@ -220,3 +220,56 @@ The intended multi-agent workflow will use OpenAI for research direction and ana
 4. Add command allowlists, backups/Git branches, bounded retries, serial execution, and explicit spending limits before enabling autonomous actions.
 5. Continue the saturation-region sweep and review outstanding RTL width warnings.
 6. Add a validated Muqarnas model and matched traffic traces before making comparative performance claims.
+
+
+## 13. RTL open-loop benchmark update (9 November 2026)
+
+A new **RTL-level open-loop benchmark** has been completed on the 4×4, 16-PE prototype. The experiment compares the tree-only configuration with the express-link configuration under matched traffic: for each workload and seed, the same generated packet trace is replayed in both configurations. The runner also checked that each replay used an identical trace.
+
+### Experiment setup
+
+- Three traffic patterns: uniform, transpose, and hotspot (PE 5).
+- Two random seeds per pattern (seeds 1 and 2).
+- Two network configurations: tree-only and express enabled.
+- 500 measurement cycles after 100 warm-up cycles; injection probability 0.20 per PE per cycle.
+- Source queue depth 128; overflow policy set to `fail`.
+- Receiver-side artificial stalls disabled (`rx_stall_cycles=0`).
+- Total: **12 RTL simulation cases** (3 patterns × 2 seeds × 2 configurations).
+
+All 12 cases completed with `OPENLOOP_RESULT: PASS`. Across the cases, queued = accepted = delivered, with zero dropped packets, zero undelivered packets, zero protocol errors, zero policy errors, and completed drain. The generated traffic traces were reused for each tree-only/express pair.
+
+### Mean results across the two seeds
+
+Latency values are in RTL simulation cycles. Throughput is delivered packets per measurement cycle.
+
+| Traffic pattern | Configuration | Network latency | End-to-end latency | Delivered throughput |
+|---|---|---:|---:|---:|
+| Uniform | Tree-only | 9.5732 | 11.6296 | 3.191 |
+| Uniform | Express | 9.0237 | 10.4894 | 3.200 |
+| Transpose | Tree-only | 4.0937 | 4.0944 | 3.231 |
+| Transpose | Express | 4.0937 | 4.0944 | 3.231 |
+| Hotspot | Tree-only | 31.4756 | 204.0272 | 2.098 |
+| Hotspot | Express | 30.3791 | 164.1685 | 2.239 |
+
+Relative to tree-only, the express configuration reduced mean end-to-end latency by **9.80%** under uniform traffic and **19.54%** under hotspot traffic. Under hotspot traffic, delivered throughput increased by **6.72%** and mean source-queue waiting time decreased by **22.46%**. Under transpose traffic, the two configurations produced identical measured averages in this experiment.
+
+### Interpretation and limitations
+
+These results show a workload-dependent benefit in this particular 4×4 RTL experiment; they do **not** establish a universal advantage for express links or overall superiority over other NoC architectures. Only two seeds and one injection setting were tested. There was no receiver-side stall injection, no injection-rate sweep or saturation study in this RTL campaign, and no matched RTL comparison against external competitor implementations. The transpose result is reported as measured; no unverified explanation is assigned to the lack of change.
+
+The reported latency and throughput are RTL testbench measurements, separate from the previously reported BookSim 2 baseline results. They must not be mixed or presented as directly comparable measurements. The 16×16 (256-PE) design remains a scale-up target, not the configuration measured here.
+
+### Updated project status
+
+**Completed**
+- Open-loop RTL benchmark: 12/12 cases passed.
+- Matched tree-only/express traffic traces for all three traffic patterns and both seeds.
+- Packet accounting and drain checks passed in every case.
+
+**Still required for broader performance claims**
+- Additional seeds and injection-rate sweep, including the congestion/saturation region.
+- Controlled receiver-stall/backpressure experiments.
+- A validated Muqarnas model and fair, matched comparisons with competitor architectures.
+- Continued review of outstanding Verilator width warnings.
+
+The raw run directories, per-run CSV metrics, manifests, simulator logs, and traffic traces are retained locally under `results/v2/20261108T192622Z-e6f0f112/` in the Ubuntu project environment. They are not claimed to be hosted on this website.
