@@ -22,6 +22,10 @@ I work on computer architecture and hardware systems for efficient data movement
 
 This website presents selected research directions, implementation work, and technical materials. Project descriptions distinguish ongoing design and evaluation from experimentally validated results; performance claims are included only when supported by reproducible measurements.
 
+## Latest research update
+
+The Muqarnas-NoC 4×4 RTL prototype has completed a 12-case open-loop benchmark comparing tree-only and express-link configurations across uniform, transpose, and hotspot traffic. All cases passed packet-accounting and drain checks. Express links reduced mean end-to-end latency by 9.80% for uniform traffic and 19.54% for hotspot traffic; transpose averages were unchanged. These are preliminary, workload-specific RTL measurements (two seeds, one injection setting), not evidence of overall superiority or a comparison against other NoC designs. [Read the experiment setup, full results, and limitations →](/portfolio/muqarnas-noc/).
+
 ## Research interests
 
 - **AI accelerator architecture:** dataflows, processing-element arrays, and efficient communication for neural-network workloads
