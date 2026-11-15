@@ -273,3 +273,46 @@ The reported latency and throughput are RTL testbench measurements, separate fro
 - Continued review of outstanding Verilator width warnings.
 
 The raw run directories, per-run CSV metrics, manifests, simulator logs, and traffic traces are retained locally under `results/v2/20261108T192622Z-e6f0f112/` in the Ubuntu project environment. They are not claimed to be hosted on this website.
+
+
+## 14. RTL quality-gate and regression update (14 November 2026)
+
+The 4×4 (16-PE) RTL prototype has undergone an additional quality-control pass on the researcher's Ubuntu VMware environment. This update records the checks completed and keeps the remaining regression-runner issue explicit.
+
+### Static lint and Generic synthesis
+
+- **Verilator 5.032:** the standalone quality-gate lint completed with exit code 0 and **zero warnings** after a narrowly scoped cleanup of width and unused-signal warnings.
+- **Yosys 0.52 Generic synthesis:** completed successfully and emitted a generic Verilog netlist. The post-cleanup report lists **64,804 generic cells**, including 14,913 sequential cells and 5,731 generic multiplexers. These are technology-independent synthesis statistics, not standard-cell area, power, timing, or silicon measurements.
+- The earlier inferred-latch issue in the round-robin arbiter was removed by assigning a default value to its procedural loop variable. The subsequent Yosys log contains no `Latch inferred` message and reports zero problems in its structural `check` passes.
+- Yosys still emits one unique warning (twice in the log): the FIFO array `mem` is replaced with a list of registers. This is recorded rather than suppressed; it means this generic flow did not preserve the array as a memory macro.
+
+### Functional regression
+
+The quick RTL regression produced the following results:
+
+| Test | Recorded status |
+|---|---|
+| `original_route_tb` | PASS |
+| `route_exh_fixed` | PASS |
+| `route_exh_original` | EXPECTED_FAIL (known FIX-1 behavior in the original implementation) |
+| `unit_fifo` | PASS |
+| `unit_arb` | PASS |
+| `noc16` | PASS |
+
+These results support the continued function of the FIFO, corrected arbiter, fixed routing test, and 16-PE network testbenches after the arbiter cleanup. The expected failure of the original routing test is not counted as a failure of the corrected test.
+
+### Open issue in the aggregate regression script
+
+The same `run_all.sh quick` invocation recorded Verilator as `WARN_OR_FAIL` because its lint command passes the include path through a shared, space-separated argument variable. This differs from the standalone quality-gate invocation, which passes. Inspection also showed that the aggregate script records the Verilator return code but does not propagate that failure into its overall exit status. Consequently, the aggregate command returned exit code 0 despite the failed lint substage.
+
+This is classified as a **test-runner/reporting defect under investigation**, not as evidence of an RTL functional failure. The script has not yet been corrected, and a clean full regression through the aggregate runner has therefore **not** been claimed.
+
+### Current evidence-based status
+
+- Standalone Verilator lint: passed, zero warnings.
+- Yosys Generic synthesis: passed; no inferred latch; one documented memory-to-register warning.
+- Quick functional tests: five PASS results and one documented EXPECTED_FAIL for the original buggy routing variant.
+- Aggregate regression runner: requires correction so include arguments are passed reliably and any failed stage causes a non-zero overall exit status.
+- No new claims are made about physical area, energy, clock frequency, saturation throughput, or superiority over competing NoCs.
+
+All reported checks were run locally by the researcher. The website records the supplied terminal outputs; it does not imply that the simulations were executed by GitHub or by this website.
