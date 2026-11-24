@@ -26,6 +26,10 @@ This website presents selected research directions, implementation work, and tec
 
 The Muqarnas-NoC 4×4 RTL prototype has completed a 12-case open-loop benchmark comparing tree-only and express-link configurations across uniform, transpose, and hotspot traffic. All cases passed packet-accounting and drain checks. Express links reduced mean end-to-end latency by 9.80% for uniform traffic and 19.54% for hotspot traffic; transpose averages were unchanged. These are preliminary, workload-specific RTL measurements (two seeds, one injection setting), not evidence of overall superiority or a comparison against other NoC designs. [Read the experiment setup, full results, and limitations →](/portfolio/muqarnas-noc/).
 
+
+
+A consolidated report of the RTL verification, open-loop experiments, Python model limitations, BookSim baselines, and current integration status is available in the [Muqarnas-NoC simulation report →](/portfolio/muqarnas-noc/#consolidated-simulation-and-verification-report-24-november-2026).
+
 ## Research interests
 
 - **AI accelerator architecture:** dataflows, processing-element arrays, and efficient communication for neural-network workloads
