@@ -316,3 +316,107 @@ This is classified as a **test-runner/reporting defect under investigation**, no
 - No new claims are made about physical area, energy, clock frequency, saturation throughput, or superiority over competing NoCs.
 
 All reported checks were run locally by the researcher. The website records the supplied terminal outputs; it does not imply that the simulations were executed by GitHub or by this website.
+
+
+## 15. Consolidated simulation and verification report (24 November 2026)
+
+This section consolidates the latest available engineering and simulation records. It separates RTL measurements, Python model-only results, BookSim baseline experiments, and the preliminary Muqarnas BookSim integration. These evidence classes are not interchangeable.
+
+### 15.1 Current architecture represented in RTL
+
+The implemented prototype is a 4×4 array of 16 processing elements (PEs), arranged in four domains. The hierarchy contains one root switch, four regional/domain switches, and 16 PE tile interfaces (21 switch/router nodes in the graph abstraction). The fixed hierarchical backbone has 20 bidirectional logical links. The design exposes 24 candidate lateral/express links (six per domain); the configuration constraints prohibit activating both crossing diagonals simultaneously, allowing at most 20 lateral links to be active.
+
+The configuration `24'h7df7df` activates four axial links and one main diagonal in each domain, for 20 active lateral links. The current RTL uses 40-bit flits, single-flit packets, and FIFO depth four. The PE-to-domain mapping is:
+
+| Domain | PE identifiers |
+|---|---|
+| D0 | 0, 1, 4, 5 |
+| D1 | 2, 3, 6, 7 |
+| D2 | 8, 9, 12, 13 |
+| D3 | 10, 11, 14, 15 |
+
+An important modeling constraint is that the current `mq_tile.sv` has terminal-only behavior: a tile injects toward its domain hierarchy or directly to a connected destination through an enabled lateral link, and incoming packets eject to the PE. Tiles do not forward transit packets. Consequently, a generic shortest-path model that routes packets through PE tiles as intermediate routers would not be semantically equivalent to this RTL.
+
+### 15.2 RTL functional verification
+
+The recorded RTL verification history includes a regression with 17 passing tests, zero failures, and zero test errors (one archived run reported 12,860 cycles). Other quick-regression records identify the individual test outcomes as follows:
+
+| Test | Recorded status |
+|---|---|
+| `original_route_tb` | PASS |
+| `route_exh_fixed` | PASS |
+| `route_exh_original` | EXPECTED_FAIL (known original-variant FIX-1 behavior) |
+| `unit_fifo` | PASS |
+| `unit_arb` | PASS |
+| `noc16` | PASS |
+
+A route-exhaustive test explored 368,896 walks without observing an illegal direct-edge traversal. These are functional verification observations, not performance comparisons against external NoCs.
+
+### 15.3 Open-loop RTL measurements
+
+The completed 12-case open-loop campaign compared tree-only and express-enabled configurations for three synthetic traffic patterns (uniform, transpose, and hotspot), two seeds per pattern, and a 20% injection probability. Each express run replayed the same generated traffic trace as its tree-only counterpart. The measurement window was 500 cycles, preceded by 100 warm-up cycles.
+
+All 12 cases completed with packet accounting equality and drain completion. The campaign recorded no dropped or undelivered packets and no protocol/policy errors. Receiver-side artificial stalls were disabled.
+
+| Traffic | Tree-only mean E2E latency | Express mean E2E latency | E2E latency change | Delivered throughput change |
+|---|---:|---:|---:|---:|
+| Uniform | 11.6296 cycles | 10.4894 cycles | −9.80% | +0.28% |
+| Transpose | 4.0944 cycles | 4.0944 cycles | 0.00% | 0.00% |
+| Hotspot | 204.0272 cycles | 164.1685 cycles | −19.54% | +6.72% |
+
+For hotspot traffic, mean source-queue waiting time also decreased by 22.46%. These results indicate workload-dependent effects in this specific 4×4 RTL experiment. They do not establish general superiority, and they are not a comparison against external competitor implementations. The campaign used two seeds and one injection setting; it did not include a full RTL injection-rate/saturation sweep or receiver-stall campaign.
+
+A separate 30% injection-rate attempt was incomplete: only eight cases were present, with hotspot cases missing and the summary CSV containing only its header. It is not a valid aggregate result and is excluded from performance claims.
+
+### 15.4 Python model-only experiments
+
+The project contains Python cycle/model and route-audit scripts. Their outputs are explicitly model-only and must not be presented as RTL measurements. A historical model-only report recorded 48 runs without loss or deadlock under its modeled conditions, with illustrative route-delay observations (for example, PE0→PE15 at four cycles and selected nearest-neighbor cases improving from 3.27 to 2.32 cycles with express links). These results depend on the Python model's assumptions and do not demonstrate corresponding behavior in the RTL or BookSim implementation.
+
+### 15.5 Verilator, Yosys, and RTL quality gates
+
+A standalone Verilator lint run passed with zero warnings after cleanup of width-truncation and unused-signal warnings. Yosys Generic synthesis completed successfully after a default assignment was added to the round-robin arbiter's procedural loop variable; subsequent logs showed no inferred latch and zero problems in structural `check` passes.
+
+One archived Generic synthesis report recorded 64,823 cells, 49,561 wires, and 94,613 wire bits. The reported sequential-cell and mux counts are technology-independent synthesis statistics. They are not standard-cell area, physical timing, power, energy, or silicon measurements. Yosys also reported that the FIFO array memory was replaced with a list of registers; this is a documented generic-mapping warning.
+
+The aggregate `run_all.sh quick` script still has a known reporting defect in the recorded version: its Verilator include-path argument is split incorrectly, and the script does not propagate that substage's failure into its overall exit code. Therefore, a zero exit code from that aggregate invocation is not sufficient evidence that every substage passed. The independent Verilator and Yosys quality gates should be considered separately until the runner is repaired and rerun.
+
+### 15.6 BookSim 2 baseline experiments
+
+BookSim 2 baseline experiments evaluated 4×4 Mesh, Torus, and Flattened Butterfly networks. A historical 120-run saturation-region campaign used three topologies, four injection rates (0.11–0.14), and ten seeds. At injection rate 0.11, mean packet latencies were 46.44 cycles (Mesh), 45.35 cycles (Torus), and 40.61 cycles (Flattened Butterfly). At 0.12, the corresponding means were 70.26, approximately 66.20, and 51.51 cycles. At 0.13, Mesh and Torus were unstable while Flattened Butterfly remained stable at a mean of 104.05 cycles; at 0.14, all three were unstable.
+
+In these experiments, “unstable” means BookSim stopped after the configured latency threshold was exceeded. It is not proof of deadlock. These are BookSim baseline-only results, not Muqarnas measurements. Earlier BookSim logs also contained a return-code convention issue (the supplied upstream `main.cpp` returned -1 on successful completion), so any result affected by that runner behavior must be interpreted with its raw log and exit-code handling in view.
+
+### 15.7 Preliminary Muqarnas BookSim integration
+
+A source-aware terminal-only routing prototype was added to a detached BookSim source copy to represent the 21-node Muqarnas graph abstraction with 16 terminals, 20 backbone links, and either zero or 20 active lateral links. The Tree and Express graph-generation smoke workflow printed the expected PE/domain mapping and graph counts.
+
+This integration is preliminary. Its smoke test used BookSim's stock traffic generation rather than byte-for-byte replay of the RTL traffic traces. It is therefore not yet a fair, validated comparison against the RTL or competing NoC architectures.
+
+The most recent user-side smoke attempt stopped with `BookSim exited with 255`. The patch had been installed, but the user had not yet rebuilt the BookSim binary after applying it. The next required diagnostic step is to rebuild the patched source and rerun the smoke test; no successful end-to-end Muqarnas BookSim benchmark is claimed at this stage.
+
+### 15.8 Current evidence status and next steps
+
+**Established by recorded runs**
+- A 4×4, 16-PE RTL prototype and its functional testbench infrastructure.
+- Historical RTL regression and exhaustive route-test results.
+- A 12-case matched-trace RTL open-loop experiment with the workload-specific results above.
+- Standalone Verilator lint with zero warnings and successful Yosys Generic synthesis after the arbiter fix.
+- BookSim baseline-only experiments for Mesh, Torus, and Flattened Butterfly.
+- A preliminary source-aware Muqarnas AnyNet/terminal-only routing prototype and graph-generation smoke workflow.
+
+**Not yet established**
+- A completed, validated Muqarnas BookSim benchmark.
+- A matched-trace, same-assumption comparison of Muqarnas against external competitors.
+- A full RTL injection-rate/saturation study with multiple seeds and backpressure.
+- Physical area, power, energy, or maximum clock frequency.
+- Performance at 16×16 (256 PEs); this remains a scale-up target.
+
+**Immediate next steps**
+1. Rebuild the patched BookSim binary and rerun the Tree/Express smoke tests, preserving complete logs and exit codes.
+2. Repair `run_all.sh` so include paths are passed correctly and any failed substage produces a non-zero overall status.
+3. Validate terminal-only routing semantics against RTL behavior before using the BookSim model for comparative claims.
+4. Implement exact packet-trace replay (source, destination, and injection cycle) across Muqarnas and each competitor, with documented differences in router pipeline and buffering assumptions.
+5. Expand seeds and injection-rate sweeps, add receiver backpressure, and report confidence intervals and stable/unstable classifications.
+6. Use appropriate synthesis and power-analysis flows for area/energy claims.
+
+The central research-integrity rule remains unchanged: RTL measurements, Python model-only outputs, BookSim baseline results, and preliminary Muqarnas BookSim smoke tests are reported as separate evidence classes. No overall superiority claim is made until a validated, reproducible, same-condition comparison has been completed.
