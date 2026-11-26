@@ -420,3 +420,99 @@ The most recent user-side smoke attempt stopped with `BookSim exited with 255`. 
 6. Use appropriate synthesis and power-analysis flows for area/energy claims.
 
 The central research-integrity rule remains unchanged: RTL measurements, Python model-only outputs, BookSim baseline results, and preliminary Muqarnas BookSim smoke tests are reported as separate evidence classes. No overall superiority claim is made until a validated, reproducible, same-condition comparison has been completed.
+
+
+## 16. Latest BookSim smoke and static route audit (26 November 2026)
+
+This addendum supersedes the earlier preliminary status in Section 15.7 where the first post-patch smoke attempt had exited with code 255. A subsequent run on 25 November 2026 completed successfully.
+
+### 16.1 Build and smoke-test outcome
+
+The user reran the build command in:
+
+`~/Downloads/muqarnas_benchmark/external/booksim2/src`
+
+Make reported `Nothing to be done for 'all'` and returned `BUILD_EXIT_CODE=0`. The existing BookSim binary was present (reported size 17 MB; timestamp 25 November 2026, 14:43 local shell time).
+
+The starter smoke script then generated both graphs and completed with:
+
+- `SMOKE_TEST_PASS`
+- `SMOKE_EXIT_CODE=0`
+
+The generated result directory was:
+
+`Muqarnas-NoC-RTL-Final/results/booksim_muqarnas_smoke_20261125T141409Z`
+
+The graph generator reported the expected PE/domain mapping:
+`{0:[0,1,4,5], 1:[2,3,6,7], 2:[8,9,12,13], 3:[10,11,14,15]}`.
+
+| Graph | Routers | Terminals | Backbone links | Active lateral links |
+|---|---:|---:|---:|---:|
+| Tree-only | 21 | 16 | 20 | 0 |
+| Express | 21 | 16 | 20 | 20 |
+
+The final printed BookSim packet-latency averages were 23.9984 cycles for Tree-only and 23.1920 cycles for Express. This is approximately a 3.36% lower printed average for Express in this particular smoke configuration.
+
+Both configuration files used the same settings except for the network-file path: AnyNet topology, `routing_function = muqarnas`, Uniform traffic, one VC, VC buffer size four, one-flit packets, injection rate 0.01, seed 1, latency simulation, sample period 5000, ten maximum samples, one warm-up period, and the same configured pipeline/allocation delays. The logs contained no matches for the checked warning/error/assertion/unstable/convergence/deadlock keywords.
+
+These numbers remain smoke-test observations only. They are not a validated performance result, do not establish saturation behavior, and must not be used as evidence of superiority over external architectures. The run uses one seed and a low injection rate; it did not replay the exact RTL traffic trace.
+
+### 16.2 Static all-pairs graph audit
+
+A corrected static audit reconstructed the bidirectional Router-to-Router edges from the AnyNet files and checked all 256 source/destination pairs in each graph. It verified graph connectivity, terminal mapping, expected backbone/lateral link counts, and that PE routers are not used as intermediate transit routers in the constructed routes.
+
+| Audit result | Tree-only | Express |
+|---|---:|---:|
+| Total undirected Router links | 20 | 40 |
+| Backbone links | 20 | 20 |
+| Lateral links | 0 | 20 |
+| Source/destination pairs checked | 256 | 256 |
+| Cross-domain hierarchical pairs | 192 | 192 |
+| Same-domain hierarchical pairs | 48 | 8 |
+| Direct lateral pairs | 0 | 40 |
+| Self pairs | 16 | 16 |
+| Static graph audit | PASS | PASS |
+
+The audit generated:
+- `tree_all_pairs_route_audit.csv`
+- `express_all_pairs_route_audit.csv`
+
+This is a static graph and expected-route audit. It does not by itself prove that the compiled BookSim routing callback actually selected the intended output port for every packet.
+
+### 16.3 Routing-function registration discrepancy — unresolved
+
+The inspected configuration files specify:
+
+`routing_function = muqarnas;`
+
+However, the inspected `networks/anynet.cpp` registration line is:
+
+`gRoutingFunctionMap["muqarnas_anynet"] = &muqarnas_anynet;`
+
+The source search output showed this `muqarnas_anynet` registration, while the smoke configuration uses the different string `muqarnas`. The actual callback implementation is located later in the file (reported around line 560), and the source-aware route table is built using both `Flit::src` and `Flit::dest`. However, the supplied diagnostic output did not include the callback body or establish where the `muqarnas` name is registered/resolved.
+
+This discrepancy must be resolved before treating the smoke run as a validated Muqarnas routing experiment. A successful process exit and latency output alone do not prove that the intended callback was selected. The next verification must inspect the full routing-function registration/dispatch path and the callback body, then run a small deterministic source/destination test that confirms the selected output ports.
+
+### 16.4 Updated evidence status
+
+**Now established**
+- The patched BookSim executable was available and the Make build stage returned zero.
+- The Tree-only and Express smoke workflows both completed with exit code zero.
+- The generated graph sizes and link counts match the intended 21-router/16-terminal abstraction.
+- Static all-pairs graph audits passed for 256 pairs per graph.
+- The smoke logs contained no matches for the checked warning/error/assertion/unstable/convergence/deadlock terms.
+
+**Still not established**
+- That `routing_function = muqarnas` resolves to the intended `muqarnas_anynet` callback.
+- That the compiled callback chooses the intended output port for every source/destination pair.
+- A validated BookSim performance characterization of Muqarnas.
+- A fair same-trace comparison against Mesh, Torus, Flattened Butterfly, or other published architectures.
+- Saturation throughput, confidence intervals across multiple seeds, or backpressure behavior.
+
+**Next actions**
+1. Resolve the routing-function name/registration discrepancy and inspect the complete callback implementation.
+2. Add deterministic callback/route-selection checks for representative same-domain, cross-domain, direct-lateral, and self-destination packets.
+3. Only after these checks pass, run multiple seeds and an injection-rate sweep for Tree-only and Express.
+4. Implement exact trace replay and controlled competitor comparisons, with explicit documentation of packet format, traffic timing, router pipeline, buffering, and measurement windows.
+
+The approximately 3.36% smoke-test latency difference is retained as a preliminary observation only. It is not promoted to a research performance claim.
